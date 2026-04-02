@@ -4,6 +4,7 @@
 *.suo
 *.userosscache
 *.sln.docstates
+*appsettings.json
 
 # Build results
 bin/

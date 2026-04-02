@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HttpNodesForQdrant.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/home")]
     [ApiController]
     public class HomeController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace HttpNodesForQdrant.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<ActionResult<IReadOnlyList<ConversationSearchResult>>> SearchConversation(
+        public async Task<IActionResult> SearchConversation(
             [FromBody] SearchConversationRequest request,
             [FromHeader(Name = "X-Api-Key")] string? apiKey,
             CancellationToken cancellationToken)
@@ -56,7 +56,12 @@ namespace HttpNodesForQdrant.Controllers
                 }
 
                 var results = await _qdrantService.SearchConversationsAsync(request, cancellationToken);
-                return Ok(results);
+                if (results.Count == 0)
+                {
+                    return Ok(new { memory = (ConversationSearchResult?)null });
+                }
+
+                return Ok(new { memory = results });
             }
             catch(Exception ex)
             {
